@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bean Theory ☕ — Brewed Slowly, Remembered Forever</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* =============================================
+       CSS VARIABLES & RESET
+    ============================================= */
+    :root {
+      --bg-main:       #FDE3C6;
+      --card-pink:     #FBC4B6;
+      --btn-mint:      #9BC4B2;
+      --btn-mint-dark: #7aab9a;
+      --text-heading:  #3D342E;
+      --text-body:     #5E524B;
+      --border-light:  #F6EBDD;
+      --cream:         #FFF8F0;
+      --soft-shadow:   0 8px 30px rgba(61,52,46,0.07);
+      --lift-shadow:   0 16px 48px rgba(61,52,46,0.13);
+      --radius-sm:     12px;
+      --radius-md:     20px;
+      --radius-lg:     28px;
+      --max-w:         1200px;
+      --transition:    all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 400;
+      background-color: var(--bg-main);
+      color: var(--text-body);
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Fraunces', serif;
+      color: var(--text-heading);
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* =============================================
+       SCROLL ANIMATIONS
+    ============================================= */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-up.delay-1 { transition-delay: 0.1s; }
+    .fade-up.delay-2 { transition-delay: 0.2s; }
+    .fade-up.delay-3 { transition-delay: 0.32s; }
+    .fade-up.delay-4 { transition-delay: 0.44s; }
+
+    /* =============================================
+       NAVBAR
+    ============================================= */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 16px 32px;
+      transition: var(--transition);
+      background: transparent;
+    }
+    .navbar.scrolled {
+      background: rgba(253, 227, 198, 0.96);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 24px rgba(61,52,46,0.07);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+    .navbar-container {
+      max-width: var(--max-w);
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      letter-spacing: 0.02em;
+    }
+    .logo span { color: var(--btn-mint-dark); }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+    }
+    .nav-links li a {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 500;
+      font-size: 0.92rem;
+      color: var(--text-heading);
+      position: relative;
+      padding-bottom: 4px;
+      transition: color 0.3s;
+    }
+    .nav-links li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--btn-mint);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    .nav-links li a:hover::after { width: 100%; }
+    .nav-links li a:hover { color: var(--btn-mint-dark); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text-heading);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 32px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Sunlight glow corners */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(255,220,160,0.45) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(155,196,178,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: var(--max-w);
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      width: 100%;
+    }
+    .hero-text { position: relative; z-index: 1; }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--btn-mint-dark);
+      background: rgba(155,196,178,0.18);
+      padding: 6px 16px;
+      border-radius: 40px;
+      margin-bottom: 24px;
+    }
+    .hero-heading {
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 700;
+      font-style: italic;
+      color: var(--text-heading);
+      margin-bottom: 20px;
+      line-height: 1.15;
+    }
+    .hero-sub {
+      font-size: 1.07rem;
+      color: var(--text-body);
+      max-width: 440px;
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+    .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--btn-mint);
+      color: var(--text-heading);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+      font-size: 0.93rem;
+      padding: 14px 32px;
+      border-radius: var(--radius-lg);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-block;
+    }
+    .btn-primary:hover {
+      background: var(--btn-mint-dark);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(122,171,154,0.35);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-heading);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+      font-size: 0.93rem;
+      padding: 14px 32px;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--border-light);
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-block;
+    }
+    .btn-secondary:hover {
+      border-color: var(--btn-mint);
+      background: rgba(155,196,178,0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Hero image */
+    .hero-image-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero-blob {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+    }
+    .hero-blob img {
+      width: 100%;
+      border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%;
+      object-fit: cover;
+      aspect-ratio: 1;
+      box-shadow: var(--lift-shadow);
+    }
+    /* Floating leaves */
+    .leaf {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.6rem;
+      animation: floatLeaf 4s ease-in-out infinite;
+      opacity: 0.75;
+    }
+    .leaf-1 { top: -24px; right: 10%; animation-delay: 0s; }
+    .leaf-2 { bottom: 10%; left: -20px; animation-delay: 1.4s; font-size: 1.1rem; }
+    .leaf-3 { top: 30%; right: -28px; animation-delay: 2.6s; font-size: 1rem; }
+    @keyframes floatLeaf {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%       { transform: translateY(-10px) rotate(8deg); }
+    }
+    /* Small decorative circles */
+    .dot-decor {
+      position: absolute;
+      bottom: 5%;
+      right: -10px;
+      width: 80px; height: 80px;
+      border: 2px dashed rgba(155,196,178,0.4);
+      border-radius: 50%;
+    }
+
+    /* =============================================
+       SECTION COMMON
+    ============================================= */
+    .section-pad { padding: 96px 32px; }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-tag {
+      display: inline-block;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--btn-mint-dark);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      font-style: italic;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .section-desc {
+      max-width: 480px;
+      margin: 0 auto;
+      font-size: 1rem;
+      color: var(--text-body);
+      line-height: 1.8;
+    }
+    .mint-divider {
+      width: 48px; height: 3px;
+      background: var(--btn-mint);
+      border-radius: 3px;
+      margin: 16px auto 0;
+    }
+    .inner { max-width: var(--max-w); margin: auto; }
+
+    /* =============================================
+       FEATURED SPECIALS
+    ============================================= */
+    .specials { background: var(--cream); }
+    .specials-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .spec-card {
+      background: var(--card-pink);
+      border-radius: var(--radius-lg);
+      padding: 0 0 24px;
+      overflow: hidden;
+      box-shadow: var(--soft-shadow);
+      transition: var(--transition);
+      position: relative;
+    }
+    .spec-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--lift-shadow);
+    }
+    .spec-img-wrap {
+      position: relative;
+      height: 190px;
+      overflow: hidden;
+    }
+    .spec-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 var(--radius-sm);
+      transition: transform 0.5s ease;
+    }
+    .spec-card:hover .spec-img-wrap img { transform: scale(1.05); }
+    .chef-tag {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: var(--btn-mint);
+      color: var(--text-heading);
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: 0.04em;
+      padding: 4px 12px;
+      border-radius: 40px;
+    }
+    .spec-body { padding: 20px 20px 0; }
+    .spec-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.08rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-heading);
+    }
+    .spec-desc {
+      font-size: 0.86rem;
+      color: var(--text-body);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .spec-price {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--btn-mint-dark);
+    }
+    .spec-divider {
+      width: 32px; height: 2px;
+      background: var(--btn-mint);
+      border-radius: 2px;
+      margin: 12px 0;
+      opacity: 0.6;
+    }
+
+    /* =============================================
+       BOOK CORNER
+    ============================================= */
+    .book-corner {
+      background: var(--bg-main);
+      position: relative;
+      overflow: hidden;
+    }
+    .book-corner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f6ebdd' fill-opacity='0.5'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .book-inner {
+      max-width: var(--max-w);
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .book-img-wrap {
+      position: relative;
+    }
+    .book-img-wrap img {
+      width: 100%;
+      border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+      box-shadow: var(--lift-shadow);
+      aspect-ratio: 4/5;
+      object-fit: cover;
+    }
+    .book-polaroid-float {
+      position: absolute;
+      bottom: -24px;
+      right: -24px;
+      background: #fff;
+      padding: 10px 10px 28px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--lift-shadow);
+      transform: rotate(3deg);
+      width: 140px;
+    }
+    .book-polaroid-float img {
+      border-radius: 8px;
+      aspect-ratio: 1;
+      object-fit: cover;
+      width: 100%;
+    }
+    .polaroid-caption {
+      font-family: 'Fraunces', serif;
+      font-size: 0.7rem;
+      color: var(--text-body);
+      text-align: center;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .book-text .section-tag { text-align: left; }
+    .book-text .section-title { text-align: left; font-size: clamp(1.8rem, 3vw, 2.5rem); }
+    .book-quote {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--text-body);
+      line-height: 1.8;
+      border-left: 3px solid var(--btn-mint);
+      padding-left: 20px;
+      margin: 24px 0 32px;
+    }
+    /* Currently reading shelf */
+    .shelf-title {
+      font-family: 'Fraunces', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--btn-mint-dark);
+      margin-bottom: 16px;
+    }
+    .shelf {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .book-spine {
+      background: var(--card-pink);
+      border-radius: var(--radius-sm);
+      padding: 14px 10px;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-family: 'Fraunces', serif;
+      font-size: 0.78rem;
+      font-style: italic;
+      color: var(--text-heading);
+      box-shadow: var(--soft-shadow);
+      min-height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .book-spine:hover { transform: rotate(180deg) translateY(5px); box-shadow: var(--lift-shadow); }
+    .book-spine:nth-child(2) { background: rgba(155,196,178,0.3); min-height: 90px; }
+    .book-spine:nth-child(3) { background: rgba(253,227,198,0.8); min-height: 120px; border: 1px solid var(--border-light); }
+    .book-spine:nth-child(4) { background: rgba(251,196,182,0.6); min-height: 100px; }
+
+    /* =============================================
+       GALLERY
+    ============================================= */
+    .gallery { background: var(--cream); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: auto;
+      gap: 16px;
+    }
+    .g-item {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .g-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+    .g-item:nth-child(4) { grid-column: span 2; }
+    .g-item:nth-child(6) { grid-column: span 2; }
+    .g-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+      min-height: 200px;
+    }
+    .g-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(253, 210, 170, 0);
+      transition: background 0.4s ease;
+    }
+    .g-item:hover img { transform: scale(1.06); }
+    .g-item:hover::after { background: rgba(253, 210, 170, 0.28); }
+
+    /* =============================================
+       TESTIMONIALS
+    ============================================= */
+    .testimonials { background: var(--bg-main); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testi-card {
+      background: var(--cream);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      box-shadow: var(--soft-shadow);
+      transition: var(--transition);
+      position: relative;
+      border: 1px solid var(--border-light);
+    }
+    .testi-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--lift-shadow);
+    }
+    .testi-card:nth-child(2) { background: var(--card-pink); margin-top: 24px; }
+    .testi-card:nth-child(3) { background: rgba(155,196,178,0.18); }
+    .quote-mark {
+      font-family: 'Fraunces', serif;
+      font-size: 4rem;
+      line-height: 1;
+      color: var(--btn-mint);
+      opacity: 0.4;
+      margin-bottom: -8px;
+    }
+    .testi-text {
+      font-size: 1rem;
+      line-height: 1.8;
+      font-style: italic;
+      color: var(--text-heading);
+      margin-bottom: 20px;
+    }
+    .testi-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+    .star {
+      color: var(--card-pink);
+      font-size: 0.9rem;
+      filter: saturate(1.4);
+    }
+    .testi-card:nth-child(2) .star { color: #c97a5a; }
+    .testi-author {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-heading);
+    }
+    .testi-role {
+      font-size: 0.78rem;
+      color: var(--text-body);
+      opacity: 0.7;
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    .footer {
+      background: var(--text-heading);
+      color: rgba(255,248,240,0.85);
+      padding: 72px 32px 40px;
+    }
+    .footer-inner {
+      max-width: var(--max-w);
+      margin: auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
+    }
+    .footer-brand-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      color: var(--bg-main);
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+    }
+    .footer-tagline {
+      font-style: italic;
+      font-size: 0.9rem;
+      opacity: 0.6;
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+    .footer-socials { display: flex; gap: 12px; }
+    .social-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,248,240,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .social-icon:hover {
+      background: var(--btn-mint);
+      border-color: var(--btn-mint);
+      color: var(--text-heading);
+    }
+    .footer-col-title {
+      font-family: 'Fraunces', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--bg-main);
+      margin-bottom: 20px;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      font-size: 0.88rem;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    .footer-col ul li a:hover { opacity: 1; }
+    .footer-hours p, .footer-address p {
+      font-size: 0.88rem;
+      opacity: 0.7;
+      line-height: 1.8;
+    }
+    .footer-divider {
+      height: 1px;
+      background: rgba(255,248,240,0.1);
+      margin-bottom: 32px;
+    }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-quote {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--btn-mint);
+      opacity: 0.9;
+    }
+    .footer-copy {
+      font-size: 0.78rem;
+      opacity: 0.4;
+    }
+
+    /* =============================================
+       MOBILE NAV DRAWER
+    ============================================= */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(61,52,46,0.65);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .mobile-nav.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .mobile-nav-panel {
+      position: absolute;
+      top: 0; right: 0;
+      width: 80%; max-width: 300px;
+      height: 100%;
+      background: var(--bg-main);
+      padding: 80px 32px;
+      transform: translateX(100%);
+      transition: transform 0.35s ease;
+    }
+    .mobile-nav.open .mobile-nav-panel {
+      transform: translateX(0);
+    }
+    .mobile-nav-links { display: flex; flex-direction: column; gap: 32px; }
+    .mobile-nav-links a {
+      font-family: 'Fraunces', serif;
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--text-heading);
+    }
+    .mobile-close {
+      position: absolute;
+      top: 24px; right: 24px;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-heading);
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 1024px) {
+      .specials-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+
+    @media (max-width: 768px) {
+      .section-pad { padding: 64px 20px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-nav { display: block; }
+
+      .hero {
+        padding: 100px 20px 64px;
+        min-height: auto;
+      }
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+      }
+      .hero-btns { justify-content: center; }
+      .hero-sub { margin: 0 auto 40px; }
+      .hero-image-wrap { order: -1; }
+      .hero-blob { max-width: 320px; margin: auto; }
+
+      .book-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .book-text .section-title, .book-text .section-tag { text-align: center; }
+      .book-quote { text-align: left; }
+      .shelf { justify-content: center; }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .g-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+      .g-item:nth-child(4), .g-item:nth-child(6) { grid-column: span 2; }
+
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .testi-card:nth-child(2) { margin-top: 0; }
+
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+
+      .specials-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar" aria-label="Main navigation">
+    <div class="navbar-container">
+      <a href="#home" class="logo">Bean Theory <span>☕</span></a>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#book-corner">Book Corner</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav -->
+  <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+    <div class="mobile-nav-panel">
+      <button class="mobile-close" id="mobileClose" aria-label="Close menu">✕</button>
+      <ul class="mobile-nav-links">
+        <li><a href="#home" class="mobile-link">Home</a></li>
+        <li><a href="#menu" class="mobile-link">Menu</a></li>
+        <li><a href="#book-corner" class="mobile-link">Book Corner</a></li>
+        <li><a href="#about" class="mobile-link">About</a></li>
+        <li><a href="#contact" class="mobile-link">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-eyebrow fade-up">☁ A quiet place to breathe</div>
+        <h1 class="hero-heading fade-up delay-1">Brewed Slowly,<br>Remembered Forever.</h1>
+        <p class="hero-sub fade-up delay-2">A whimsical café tucked between pages, plants, and peaceful conversations.</p>
+        <div class="hero-btns fade-up delay-3">
+          <a href="#menu" class="btn-primary">Explore Menu</a>
+          <a href="#contact" class="btn-secondary">Visit Us</a>
+        </div>
+      </div>
+      <div class="hero-image-wrap fade-up delay-2">
+        <div class="hero-blob">
+          <img
+            src="https://i.pinimg.com/736x/db/94/10/db941014865c519c06f11b8189f5108f.jpg"
+            alt="Sunlit cozy café with warm coffee and books"
+            loading="eager"
+          />
+          <span class="leaf leaf-1" aria-hidden="true">🌿</span>
+          <span class="leaf leaf-2" aria-hidden="true">🍃</span>
+          <span class="leaf leaf-3" aria-hidden="true">🌱</span>
+          <div class="dot-decor" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURED SPECIALS ===== -->
+  <section class="specials section-pad" id="menu" aria-labelledby="specials-heading">
+    <div class="inner">
+      <div class="section-header">
+        <p class="section-tag fade-up">✦ Our Favourites</p>
+        <h2 class="section-title fade-up delay-1" id="specials-heading">This Season's Specials</h2>
+        <p class="section-desc fade-up delay-2">Crafted with slow hands and warm mornings — each cup is a small celebration.</p>
+        <div class="mint-divider fade-up delay-3"></div>
+      </div>
+      <div class="specials-grid">
+
+        <div class="spec-card fade-up">
+          <div class="spec-img-wrap">
+            <img
+              src="https://i.pinimg.com/1200x/3e/e4/d3/3ee4d30884303dddbbbd6baffb37d5e1.jpg"
+              alt="Honey Cinnamon Latte in a warm ceramic mug"
+              loading="lazy"
+            />
+            <span class="chef-tag">✦ Chef's Pick</span>
+          </div>
+          <div class="spec-body">
+            <p class="spec-name">Honey Cinnamon Latte</p>
+            <div class="spec-divider"></div>
+            <p class="spec-desc">Espresso kissed with raw honey, a whisper of cinnamon, and steamed oat milk.</p>
+            <span class="spec-price">₹ 320</span>
+          </div>
+        </div>
+
+        <div class="spec-card fade-up delay-1">
+          <div class="spec-img-wrap">
+            <img
+              src="https://i.pinimg.com/736x/d0/68/cc/d068cceb2ac7527c3491e3813aaad558.jpg"
+              alt="Rose Cream Cold Brew with floral garnish"
+              loading="lazy"
+            />
+          </div>
+          <div class="spec-body">
+            <p class="spec-name">Rose Cream Cold Brew</p>
+            <div class="spec-divider"></div>
+            <p class="spec-desc">18-hour steeped cold brew layered with rose-infused cream and dried petals.</p>
+            <span class="spec-price">₹ 360</span>
+          </div>
+        </div>
+
+        <div class="spec-card fade-up delay-2">
+          <div class="spec-img-wrap">
+            <img
+              src="https://i.pinimg.com/736x/49/c7/e1/49c7e16330bfc0795699b3b52a9cb2e9.jpg"
+              alt="Matcha Cloud drink in a glass"
+              loading="lazy"
+            />
+            <span class="chef-tag">✦ Chef's Pick</span>
+          </div>
+          <div class="spec-body">
+            <p class="spec-name">Matcha Cloud</p>
+            <div class="spec-divider"></div>
+            <p class="spec-desc">Ceremonial-grade matcha, frothy coconut milk, and a soft vanilla cloud on top.</p>
+            <span class="spec-price">₹ 340</span>
+          </div>
+        </div>
+
+        <div class="spec-card fade-up delay-3">
+          <div class="spec-img-wrap">
+            <img
+              src="https://i.pinimg.com/736x/f7/47/61/f74761bee8b2f9f40b33847cb406be9a.jpg"
+              alt="Almond Butter Croissant on a plate"
+              loading="lazy"
+            />
+          </div>
+          <div class="spec-body">
+            <p class="spec-name">Almond Butter Croissant</p>
+            <div class="spec-divider"></div>
+            <p class="spec-desc">Flaky, laminated dough filled with almond cream and dusted with pearl sugar.</p>
+            <span class="spec-price">₹ 220</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BOOK CORNER ===== -->
+  <section class="book-corner section-pad" id="book-corner" aria-labelledby="book-heading">
+    <div class="book-inner inner">
+      <div class="book-img-wrap fade-up">
+        <img
+          src="https://i.pinimg.com/736x/cc/00/68/cc00689c4b058642c4469a9e77946035.jpg"
+          alt="Warm bookshelf inside a cozy café"
+          loading="lazy"
+        />
+        <div class="book-polaroid-float" aria-hidden="true">
+          <img
+            src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&auto=format&fit=crop&q=80"
+            alt="Polaroid of a book and coffee"
+          />
+          <p class="polaroid-caption">afternoon reads ☕</p>
+        </div>
+      </div>
+      <div class="book-text fade-up delay-2">
+        <p class="section-tag">📚 The Book Corner</p>
+        <h2 class="section-title" id="book-heading">Find a corner,<br>pick a story.</h2>
+        <p class="book-quote">Let time steep gently between the pages. Our shelves are always open, and so is a chair by the window.</p>
+        <p style="font-size:0.95rem; margin-bottom:32px; line-height:1.8;">Choose a novel from our lending wall, settle into a favourite nook, and let the hours blur softly. Every book here has been loved before — and wants to be loved again.</p>
+        <p class="shelf-title">Currently Reading at Bean Theory</p>
+        <div class="shelf" role="list">
+          <div class="book-spine" role="listitem">The Midnight Library</div>
+          <div class="book-spine" role="listitem">Stardust</div>
+          <div class="book-spine" role="listitem">The House in the Cerulean Sea</div>
+          <div class="book-spine" role="listitem">Normal People</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GALLERY ===== -->
+  <section class="gallery section-pad" id="gallery" aria-labelledby="gallery-heading">
+    <div class="inner">
+      <div class="section-header">
+        <p class="section-tag fade-up">📸 Moments</p>
+        <h2 class="section-title fade-up delay-1" id="gallery-heading">A Corner of the World</h2>
+        <p class="section-desc fade-up delay-2">Sunlight, steam, and slow afternoons — snapshots from our little sanctuary.</p>
+        <div class="mint-divider fade-up delay-3"></div>
+      </div>
+      <div class="gallery-grid fade-up">
+        <div class="g-item">
+          <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=800&auto=format&fit=crop&q=80" alt="Sunlit café interior with plants and warm light" loading="lazy" />
+        </div>
+        <div class="g-item">
+          <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&auto=format&fit=crop&q=80" alt="Close-up of coffee latte art in a ceramic cup" loading="lazy" />
+        </div>
+        <div class="g-item">
+          <img src="https://images.unsplash.com/photo-1507914372368-b2b085b925a1?w=600&auto=format&fit=crop&q=80" alt="Pastries and books on a wooden table" loading="lazy" />
+        </div>
+        <div class="g-item">
+          <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&auto=format&fit=crop&q=80" alt="Person reading a book with a coffee by the window" loading="lazy" />
+        </div>
+        <div class="g-item">
+          <img src="https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=600&auto=format&fit=crop&q=80" alt="Vintage café corner with potted plants" loading="lazy" />
+        </div>
+        <div class="g-item">
+          <img src="https://images.unsplash.com/photo-1498804103079-a6351b050096?w=800&auto=format&fit=crop&q=80" alt="Beautiful café table with croissant and coffee in soft light" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="testimonials section-pad" id="about" aria-labelledby="testi-heading">
+    <div class="inner">
+      <div class="section-header">
+        <p class="section-tag fade-up">☁ Kind Words</p>
+        <h2 class="section-title fade-up delay-1" id="testi-heading">What Our Guests Say</h2>
+        <p class="section-desc fade-up delay-2">Not just reviews — tiny diary entries from people who stayed a little longer than planned.</p>
+        <div class="mint-divider fade-up delay-3"></div>
+      </div>
+      <div class="testimonials-grid">
+
+        <div class="testi-card fade-up">
+          <div class="quote-mark" aria-hidden="true">"</div>
+          <div class="testi-stars" aria-label="5 stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testi-text">Stayed for coffee. Ended up staying for peace. I come here every Sunday now — it's the only hour of the week that feels entirely mine.</p>
+          <p class="testi-author">Priya M.</p>
+          <p class="testi-role">Poet & weekend wanderer</p>
+        </div>
+
+        <div class="testi-card fade-up delay-1">
+          <div class="quote-mark" aria-hidden="true">"</div>
+          <div class="testi-stars" aria-label="5 stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testi-text">The Matcha Cloud is the most calming thing that has ever happened to me on a Tuesday. Also borrowed The Midnight Library and cried a lot. 10/10.</p>
+          <p class="testi-author">Arjun K.</p>
+          <p class="testi-role">Software engineer, reader</p>
+        </div>
+
+        <div class="testi-card fade-up delay-2">
+          <div class="quote-mark" aria-hidden="true">"</div>
+          <div class="testi-stars" aria-label="5 stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testi-text">I've worked from dozens of cafés and none of them felt like this. It's not the coffee (though it's wonderful). It's the light. It's always perfect here.</p>
+          <p class="testi-author">Nadia F.</p>
+          <p class="testi-role">Illustrator & light-chaser</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="contact" aria-label="Footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <p class="footer-brand-name">Bean Theory ☕🌿</p>
+          <p class="footer-tagline">A tiny digital sanctuary — and a real one,<br>waiting for you around the corner.</p>
+          <div class="footer-socials" aria-label="Social media links">
+            <div class="social-icon" role="link" tabindex="0" aria-label="Instagram">𝕀</div>
+            <div class="social-icon" role="link" tabindex="0" aria-label="Twitter">𝕏</div>
+            <div class="social-icon" role="link" tabindex="0" aria-label="Pinterest">𝕻</div>
+          </div>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Navigate</p>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#book-corner">Book Corner</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+          </ul>
+        </div>
+        <div class="footer-hours footer-col">
+          <p class="footer-col-title">Hours</p>
+          <p>Monday – Friday<br>7:30 am – 9:00 pm</p>
+          <br>
+          <p>Saturday – Sunday<br>8:00 am – 10:00 pm</p>
+        </div>
+        <div class="footer-address footer-col">
+          <p class="footer-col-title">Find Us</p>
+          <p>12 Cobblestone Lane,<br>Indiranagar, Bengaluru<br>560038, Karnataka</p>
+          <br>
+          <p>hello@beantheory.in<br>+91 98765 43210</p>
+        </div>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-bottom">
+        <p class="footer-quote">"Every cup holds a little pause from the world."</p>
+        <p class="footer-copy">© 2025 Bean Theory. Made with warmth & wonder.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    // Navbar scroll behaviour
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // Mobile nav
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobileNav    = document.getElementById('mobileNav');
+    const mobileClose  = document.getElementById('mobileClose');
+    const mobileLinks  = document.querySelectorAll('.mobile-link');
+
+    function openNav() {
+      mobileNav.classList.add('open');
+      mobileNav.setAttribute('aria-hidden', 'false');
+      hamburgerBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeNav() {
+      mobileNav.classList.remove('open');
+      mobileNav.setAttribute('aria-hidden', 'true');
+      hamburgerBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+    hamburgerBtn.addEventListener('click', openNav);
+    mobileClose.addEventListener('click', closeNav);
+    mobileNav.addEventListener('click', e => { if (e.target === mobileNav) closeNav(); });
+    mobileLinks.forEach(l => l.addEventListener('click', closeNav));
+
+    // Fade-up on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
